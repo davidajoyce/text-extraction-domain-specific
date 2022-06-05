@@ -1,8 +1,9 @@
 //window.addEventListener('mouseup', wordSelected);
 //window.addEventListener('load', selectAllText);
 
-window.addEventListener('load', replaceText(document.body))
-window.addEventListener('load', addPopupScript())
+//window.addEventListener('load', replaceText(document.body))
+window.addEventListener('load', startReplacingText())
+//window.addEventListener('load', addP5script())
 
 var _selectIndex = 0;
 var countId = 0;
@@ -49,12 +50,59 @@ function addPopupScript(){
   document.body.appendChild(newElementScript)
 }
 
+function addP5script(){
+  const newElementScript = document.createElement('script')
+  newElementScript.innerHTML = 'type="text/javascript" src="https://cdn.jsdelivr.net/npm/p5@1.4.1/lib/p5.min.js"'
+  document.body.appendChild(newElementScript)
+}
+
+function testFinanceTermApi(){
+  let financeTermUrl = "https://financetermsearch.azurewebsites.net/api/tasks";
+  //let financeTermUrl = "https://financetermsearch.azurewebsites.net/";
+
+
+
+  //loadJSON(financeTermUrl, gotData);
+  console.log("attempting to query url")
+  let request = new XMLHttpRequest();
+  request.open("GET", financeTermUrl)
+  request.send()
+  request.onload = () => {
+    console.log(request);
+    if(request.status === 200){
+      console.log("SUCCESS")
+      console.log(JSON.parse(request.response));
+    } else {
+      console.log(`error ${request.status} ${request.statusText}`);
+    }
+  }
+  //fetch(financeTermUrl)
+  //.then(function(response){
+  //  return response.json();
+  //}).then(function(data){
+  //  console.log(data);
+  //}).catch(function(){
+  //  console.log("Boooo")
+  //});
+}
+
+function gotData(data){
+  console.log(data)
+}
+
+function startReplacingText(){
+  //addP5script()
+  addPopupScript()
+  testFinanceTermApi()
+  replaceText(document.body)
+}
+
 function replaceText(element) {
-  console.log("attempting to change element")
+  //console.log("attempting to change element")
   var test = 'hello'
-  console.log(`checking a ${test}`)
+  //console.log(`checking a ${test}`)
   popupIdCount = ++countId
-  console.log(`count ${popupIdCount}`)
+  //console.log(`count ${popupIdCount}`)
   //var popupId = "popupId" + _selectIndex++
   var popupId = "popupId" + Math.random().toString(16).slice(2)
   if (element.hasChildNodes()) {
