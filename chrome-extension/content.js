@@ -59,6 +59,7 @@ function addP5script(){
 function testFinanceTermApi(){
   let financeTermUrl = "https://financetermsearch.azurewebsites.net/api/tasks";
   //let financeTermUrl = "https://financetermsearch.azurewebsites.net/";
+  let postfinanceTermUrl = "https://financetermsearch.azurewebsites.net/api/task";
 
 
 
@@ -76,6 +77,24 @@ function testFinanceTermApi(){
       console.log(`error ${request.status} ${request.statusText}`);
     }
   }
+  const requestBody = {
+    task: "stringify test new body"
+  }
+  
+  fetch(postfinanceTermUrl, {
+    method: "POST",
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(requestBody)
+  }).then(
+    response => response.text()
+  ).then(
+    html => console.log(html)
+  );
+  
+
+
   //fetch(financeTermUrl)
   //.then(function(response){
   //  return response.json();
