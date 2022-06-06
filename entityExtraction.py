@@ -1,64 +1,10 @@
+
+# based off kaggle notebook https://www.kaggle.com/code/sudosharma/quick-and-dirty-entity-extractions
+
 import pandas as pd
 import spacy
 from spacy.displacy.render import EntityRenderer
 from IPython.core.display import display, HTML
-
-def custom_render(doc, df, column, options={}, page=False, minify=False, idx=0):
-    """Overload the spaCy built-in rendering to allow custom part-of-speech (POS) tags.
-    
-    Keyword arguments:
-    doc -- a spaCy nlp doc object
-    df -- a pandas dataframe object
-    column -- the name of of a column of interest in the dataframe
-    options -- various options to feed into the spaCy renderer, including colors
-    page -- rendering markup as full HTML page (default False)
-    minify -- for compact HTML (default False)
-    idx -- index for specific query or doc in dataframe (default 0)
-    
-    """
-    renderer, converter = EntityRenderer, parse_custom_ents
-    renderer = renderer(options=options)
-    parsed = [converter(doc, df=df, idx=idx, column=column)]
-    html = renderer.render(parsed, page=page, minify=minify).strip()  
-    return display(HTML(html))
-
-def parse_custom_ents(doc, df, idx, column):
-    """Parse custom entity types that aren't in the original spaCy module.
-    
-    Keyword arguments:
-    doc -- a spaCy nlp doc object
-    df -- a pandas dataframe object
-    idx -- index for specific query or doc in dataframe
-    column -- the name of of a column of interest in the dataframe
-    
-    """
-    if column in df.columns:
-        entities = df[column][idx]
-        ents = [{'start': ent[1], 'end': ent[2], 'label': ent[3]} 
-                for ent in entities]
-    else:
-        ents = [{'start': ent.start_char, 'end': ent.end_char, 'label': ent.label_}
-            for ent in doc.ents]
-    return {'text': doc.text, 'ents': ents, 'title': None}
-
-def render_entities(idx, df, options={}, column='named_ents'):
-    """A wrapper function to get text from a dataframe and render it visually in jupyter notebooks
-    
-    Keyword arguments:
-    idx -- index for specific query or doc in dataframe (default 0)
-    df -- a pandas dataframe object
-    options -- various options to feed into the spaCy renderer, including colors
-    column -- the name of of a column of interest in the dataframe (default 'named_ents')
-    
-    """
-    text = df['text'][idx]
-    custom_render(nlp(text), df=df, column=column, options=options, idx=idx)
-
-
-# colors for additional part of speech tags we want to visualize
-options = {
-    'colors': {'COMPOUND': '#FE6BFE', 'PROPN': '#18CFE6', 'NOUN': '#18CFE6', 'NP': '#1EECA6', 'ENTITY': '#FF8800'}
-}
 
 pd.set_option('display.max_rows', 10) # edit how jupyter will render our pandas dataframes
 pd.options.mode.chained_assignment = None # prevent warning about working on a copy of a dataframe
@@ -66,7 +12,11 @@ pd.options.mode.chained_assignment = None # prevent warning about working on a c
 #nlp = spacy.load('en_core_web_sm')
 nlp = spacy.load('en_core_web_lg')
 
-financeText = "Some basic Economics 101 supply-and-demand analysis can be helpful, in assessing the macroeconomic impact of COVID-19 Note that the second-round impact of a global epidemic will result in moderate to majorcontractions in demand. As supply-side disruptions close factories and places of work,consumers will cut back on their spending, shifting demand curves inward, reducing GDP, boosting unemployment and moderating price rises. Some of this lost demand will be temporary, and when the epidemic recedes, consumers will ‘catch up’ on their spending, such as on vacations. But some of the demand will be lost permanently, thus reducing long-run global economic growth."
+#financeText = "Some basic Economics 101 supply-and-demand analysis can be helpful, in assessing the macroeconomic impact of COVID-19 Note that the second-round impact of a global epidemic will result in moderate to majorcontractions in demand. As supply-side disruptions close factories and places of work,consumers will cut back on their spending, shifting demand curves inward, reducing GDP, boosting unemployment and moderating price rises. Some of this lost demand will be temporary, and when the epidemic recedes, consumers will ‘catch up’ on their spending, such as on vacations. But some of the demand will be lost permanently, thus reducing long-run global economic growth."
+financeTextNotTrimmed = "HOME\nMAIL\nNEWS\nFINANCE\nSPORT\nLIFESTYLE\nENTERTAINMENT\nWEATHER\nMORE...\nYahoo Finance\nSign in\nFinance\nWatchlists\nMy Portfolios\nMarkets\nMoney\nWork\nTechnology\nIndustries\nThe New Investors\nAll Markets Summit\nGive Feedback\n\u2026\nAdvertisement\nAustralia markets open in 1 hour 46 minutes\nALL ORDS\n7,472.40\n+71.60 (+0.97%)\n\u00a0\nAUD/USD\n0.7206\n-0.0062 (-0.85%)\n\u00a0\nASX 200\n7,238.80\n+62.90 (+0.88%)\n\u00a0\nOIL\n120.57\n+1.70 (+1.43%)\n\u00a0\nGOLD\n1,853.30\n+3.10 (+0.17%)\n\u00a0\nBTC-AUD\n41,630.62\n-142.61 (-0.34%)\n\u00a0\nCMC Crypto 200\n641.58\n-19.22 (-2.91%)\n\u00a0\n\ud83d\udce9 SIGN UP NOW:\nNews that makes you smarter and richer... For free.\n\nGet Fully Briefed with Yahoo Finance, delivered straight to your inbox.\n\nBloomberg\nECB Is Ready to Tighten Just as Global Peers Speed Up: Eco Week\n1/7\nECB Is Ready to Tighten Just as Global Peers Speed Up: Eco Week\n2/7\nECB Is Ready to Tighten Just as Global Peers Speed Up: Eco Week\n3/7\nECB Is Ready to Tighten Just as Global Peers Speed Up: Eco Week\n4/7\nECB Is Ready to Tighten Just as Global Peers Speed Up: Eco Week\n5/7\nECB Is Ready to Tighten Just as Global Peers Speed Up: Eco Week\n6/7\nECB Is Ready to Tighten Just as Global Peers Speed Up: Eco Week\n7/7\nECB Is Ready to Tighten Just as Global Peers Speed Up: Eco Week\nCraig Stirling\nSun, 5 June 2022, 4:21 pm\u00b77-min read\n\n(Bloomberg) -- Sign up for the New Economy Daily newsletter, follow us @economics and subscribe to our podcast.\n\nMost Read from Bloomberg\n\n\u2018No Longer Sure Bets\u2019:"
+#line = bytes(line, 'utf-8').decode('utf-8', 'ignore')
+#original_string.encode("utf-8", "replace").decode()
+financeText = financeTextNotTrimmed.encode("utf-8", "replace").decode()
 data = [financeText.lower()]
 #df = pd.DataFrame(df['Abstract'].apply(lower))
 df = pd.DataFrame(data)
@@ -94,10 +44,6 @@ def add_named_ents(df):
 add_named_ents(df)
 display(df)
 
-column = 'named_ents'
-# changed from 9 to 0
-render_entities(0, df, options=options, column=column) # take a look at one of the abstracts
-
 def extract_nouns(text):
     """Extract a few types of nouns, and beginning, middle and end idx using spaCy's POS (part of speech) tagger. 
     
@@ -119,9 +65,6 @@ def add_nouns(df):
 
 add_nouns(df)
 display(df)
-
-column = 'nouns'
-render_entities(0, df, options=options, column=column)
 
 def extract_named_nouns(row_series):
     """Combine nouns and non-numerical entities. 
@@ -155,11 +98,6 @@ def add_named_nouns(df):
 add_named_nouns(df)
 display(df)
 
-column = 'named_nouns'
-# changed from 1 to 0
-render_entities(0, df, options=options, column=column)
-
-
 def extract_noun_phrases(text):
     """Combine noun phrases. 
     
@@ -178,24 +116,8 @@ def add_noun_phrases(df):
     """
     df['noun_phrases'] = df['text'].apply(extract_noun_phrases)
 
-def visualize_noun_phrases(text):
-    """Create a temporary dataframe to extract and visualize noun phrases. 
-    
-    Keyword arguments:
-    text -- the actual text source from which to extract entities
-    
-    """
-    df = pd.DataFrame([text]) 
-    df.columns = ['text']
-    add_noun_phrases(df)
-    column = 'noun_phrases'
-    render_entities(0, df, options=options, column=column)
-
 add_noun_phrases(df)
 display(df)
-
-column = 'noun_phrases'
-render_entities(0, df, options=options, column=column)
 
 def extract_compounds(text):
     """Extract compound noun phrases with beginning and end idxs. 
@@ -251,9 +173,6 @@ def add_compounds(df):
 add_compounds(df)
 display(df)
 
-column = 'compounds'
-render_entities(0, df, options=options, column=column)
-
 def extract_comp_nouns(row_series, cols=[]):
     """Combine compound noun phrases and entities. 
     
@@ -276,17 +195,6 @@ def add_comp_nouns(df, cols=[]):
 cols = ['nouns', 'compounds']
 add_comp_nouns(df, cols=cols)
 display(df)
-
-# take a look at all the nouns again
-column = 'named_nouns'
-render_entities(0, df, options=options, column=column)
-
-# take a look at all the compound noun phrases again
-column = 'compounds'
-render_entities(0, df, options=options, column=column)
-
-# take a look at combined entities
-df['comp_nouns'][0] 
 
 def drop_duplicate_np_splits(ents):
     """Drop any entities that are already captured by noun phrases. 
@@ -353,25 +261,29 @@ display(df)
 #df['comp_nouns'][0] 
 print(df['clean_ents'][0])
 
-def visualize_entities(df, idx=0):
-    """Visualize the entities for a given abstract in the dataframe. 
-    
-    Keyword arguments:
-    df -- a dataframe object
-    idx -- the index of interest for the dataframe (default 0)
-    
-    """
-    # store entity start and end index for visualization in dummy df
-    ents = []
-    abstract = df['text'][idx]
-    for ent in df['clean_ents'][idx]:
-        i = abstract.find(ent) # locate the index of the entity in the abstract
-        ents.append((ent, i, i+len(ent), 'ENTITY')) 
-    ents.sort(key=lambda tup: tup[1])
 
-    dummy_df = pd.DataFrame([abstract, ents]).T # transpose dataframe
-    dummy_df.columns = ['text', 'clean_ents']
-    column = 'clean_ents'
-    render_entities(0, dummy_df, options=options, column=column)
+def findFinanceTerms(financeTermNotTrimmed):
+    pd.set_option('display.max_rows', 10) 
+    pd.options.mode.chained_assignment = None 
+    financeText = financeTextNotTrimmed.encode("utf-8", "replace").decode()
+    data = [financeText.lower()]
+    #df = pd.DataFrame(df['Abstract'].apply(lower))
+    df = pd.DataFrame(data)
+    df.columns = ['text']
+    add_named_ents(df)
+    add_nouns(df)
+    add_named_nouns(df)
+    add_noun_phrases(df)
+    add_compounds(df)
+    cols = ['nouns', 'compounds']
+    add_comp_nouns(df, cols=cols)
+    funcs = [drop_duplicate_np_splits, drop_double_char, keep_alpha, drop_single_char_nps]
+    add_clean_ents(df, funcs)
+    return df['clean_ents'][0]
 
-visualize_entities(df, 0)
+def main():
+    financeTextNotTrimmed = "HOME\nMAIL\nNEWS\nFINANCE\nSPORT\nLIFESTYLE\nENTERTAINMENT\nWEATHER\nMORE...\nYahoo Finance\nSign in\nFinance\nWatchlists\nMy Portfolios\nMarkets\nMoney\nWork\nTechnology\nIndustries\nThe New Investors\nAll Markets Summit\nGive Feedback\n\u2026\nAdvertisement\nAustralia markets open in 1 hour 46 minutes\nALL ORDS\n7,472.40\n+71.60 (+0.97%)\n\u00a0\nAUD/USD\n0.7206\n-0.0062 (-0.85%)\n\u00a0\nASX 200\n7,238.80\n+62.90 (+0.88%)\n\u00a0\nOIL\n120.57\n+1.70 (+1.43%)\n\u00a0\nGOLD\n1,853.30\n+3.10 (+0.17%)\n\u00a0\nBTC-AUD\n41,630.62\n-142.61 (-0.34%)\n\u00a0\nCMC Crypto 200\n641.58\n-19.22 (-2.91%)\n\u00a0\n\ud83d\udce9 SIGN UP NOW:\nNews that makes you smarter and richer... For free.\n\nGet Fully Briefed with Yahoo Finance, delivered straight to your inbox.\n\nBloomberg\nECB Is Ready to Tighten Just as Global Peers Speed Up: Eco Week\n1/7\nECB Is Ready to Tighten Just as Global Peers Speed Up: Eco Week\n2/7\nECB Is Ready to Tighten Just as Global Peers Speed Up: Eco Week\n3/7\nECB Is Ready to Tighten Just as Global Peers Speed Up: Eco Week\n4/7\nECB Is Ready to Tighten Just as Global Peers Speed Up: Eco Week\n5/7\nECB Is Ready to Tighten Just as Global Peers Speed Up: Eco Week\n6/7\nECB Is Ready to Tighten Just as Global Peers Speed Up: Eco Week\n7/7\nECB Is Ready to Tighten Just as Global Peers Speed Up: Eco Week\nCraig Stirling\nSun, 5 June 2022, 4:21 pm\u00b77-min read\n\n(Bloomberg) -- Sign up for the New Economy Daily newsletter, follow us @economics and subscribe to our podcast.\n\nMost Read from Bloomberg\n\n\u2018No Longer Sure Bets\u2019:"
+    findFinanceTerms(financeTextNotTrimmed)
+
+if __name__ == "__main__":
+    main()
